@@ -1,0 +1,72 @@
+/* styles.css */
+
+body {
+    margin: 0;
+    padding: 0;
+    background-attachment: fixed;
+    background-position: top left;
+    background-image: url('C:\Users\haohu\GPS-App\frontend\public\Logo-SEA.AI-black-RGB.png');
+    background-size: 20%;
+    background-repeat: no-repeat;
+  }
+
+  body{
+    background-color:rgb(55, 119, 172);
+  }
+  .anchor_container{
+    font-size: 12px;
+  }
+
+  .input_container{
+    background-color:rgb(240, 240, 240);
+  }
+  .graph_container{
+    background-color:rgb(213, 230, 236);
+  }
+
+  .graph_instructions_text{
+      position: absolute;
+      left:-450px; /* Adjust this value to position the text as desired */
+      top: -400px; /* Adjust this value to position the text as desired */
+      color: rgb(255, 255, 255);
+      font-size: 12px;
+      font-weight: bold;
+      background: rgb(6, 7, 51);
+      padding: 10px;
+  }
+  .alarm {
+    position: absolute;
+    left: 600px; /* Adjust this value to position the text as desired */
+    top: -408px; /* Adjust this value to position the text as desired */
+    color: rgb(0, 0, 0);
+    font-size: 14px;
+    padding: 20px;
+    font-weight: bold;
+    background: #a6daf9;
+    opacity: 1;
+  }
+  .status-line div {
+    font-weight: bold;
+  }
+
+  .gps_info_text{
+    position: absolute;
+    right:-450px; /* Adjust this value to position the text as desired */
+    top: 0px; /* Adjust this value to position the text as desired */
+    color: white;
+    font-size: 12px;
+    font-weight: bold;
+    background: rgb(6, 7, 51);
+    padding: 10px;
+}
+  .info-container {
+    font-size: 12px;
+    padding: 10px;
+    color: black;
+    background-color:rgb(240, 240, 240);
+  }
+
+  .real_time_info{
+    font-size:12px;
+    background-color:rgb(240, 240, 240);
+  }
