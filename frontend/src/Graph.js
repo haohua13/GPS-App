@@ -25,7 +25,6 @@ const boatIconSVG = `
 </linearGradient>
 </defs>
 </svg>
-
 `;
 
 // initialize the geodesic module
@@ -201,7 +200,6 @@ const Graph = () => {
             GPSAlarm.play(); 
           }
         });*/
-
         
     // socketio.emit('user_data', {latitude, longitude, radius, arcRadius, swipe, angleSwipe});
 
@@ -218,7 +216,6 @@ const Graph = () => {
           .attr('transform', `translate(${margin},${margin})`);
     const graphWidth = width+margin;
     const graphHeight = height + margin;
-
 
     svg.selectAll('line.border-line').remove(); // Remove existing border lines
 svg
@@ -474,8 +471,6 @@ svg
                           setLongitude(newX);
                         }
                       };
-                      
-                      
         // Function to handle mouse down event and start dragging
         const handleMouseDown = (event) => {
           setDragStart({ x: event.clientX, y: event.clientY });
@@ -592,7 +587,7 @@ svg
         alert("Please enter valid values.");
       }
     };
-
+    return <inputTable></inputTable>
     return (
         <div className = "anchor_container">
         <div className = "input_container">
@@ -612,7 +607,7 @@ svg
         </>
       )}
 
-            <div><strong>Anchor Position:</strong></div>
+    <div><strong>Anchor Position:</strong></div>
             <p><button onClick={handleUseCurrentPosition}>Current Position</button></p>
 
             <div><button onClick={() => setShowRelativePosition(!showRelativePosition)}>Relative Position</button></div>
@@ -763,7 +758,6 @@ svg
           </div>
           </div>
         <div className = "graph_container" style={{ position: 'relative', display: 'inline-block' } }>
-        <div ref={graphRef}></div>
         <div ref={graphRef} onClick={handleMapClick}></div>
               <img
         src={AnchorIcon}
@@ -846,7 +840,6 @@ svg
     </div>
   )}
 </div>
-
 
           <p> GPS Information
           </p>
