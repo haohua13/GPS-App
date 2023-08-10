@@ -1,15 +1,21 @@
 import "./App.css";
 import InputTable from "./Table";
+import Tablelines from "./Tablelines";
 import Figure from "./Figure";
+import FigureTable from "./FigureTable";
 import Menu from "./Menu";
 import "./styles.css"; // Import the CSS file
-
 // Importing modules
-import React, { useState, useEffect} from "react";
+import React, { useState, useEffect } from "react";
+import {FlaskConnection} from "./WebsocketURL";
 
 // initialize the geodesic module
 var geodesic = require("geographiclib-geodesic"),
-    geod = geodesic.Geodesic.WGS84
+  geod = geodesic.Geodesic.WGS84;
+
+const FlaskWebsocket = new WebSocket(
+    'ws://'+FlaskConnection.IP + ":" + FlaskConnection.port
+  );
 
 const App = () => {
   // For AnchorTable
@@ -17,40 +23,41 @@ const App = () => {
   const [latitude, setLatitude] = useState(0);
   const [Anchor_bearing, setBearing] = useState(0);
   const [Anchor_distance, setDistance] = useState(0);
-
   // map click functionality for anchor set
   const [mapClickActive, setMapClickActive] = useState(false);
-
   // For AlarmTable
   const [radius, setRadius] = useState(5);
   const [arcRadius, setArcRadius] = useState(10);
   const [angleSwipe, setAngleSwipe] = useState(0);
   const [swipe, setSwipe] = useState(0);
-
   // real-time vessel position
-  const [real_time_vessel, setRealVesselPosition] = useState({lat:0.001, long: 0.001});
+  const [real_time_vessel, setRealVesselPosition] = useState({
+    lat: 0.001,
+    long: 0.001,
+  });
+  // set vessel heading
+  const [heading, setHeading] = useState(45);
 
-  // Function to use current vessel position as anchor position
-  const handleUseCurrentPosition = () => {
-          setLatitude(real_time_vessel.lat);
-          setLongitude(real_time_vessel.long);
-        };
-  // Function to handle the Apply Relative Position button in the AnchorTable
-  const handleApplyValues = () => {
-    if (Anchor_distance >= 0 && Anchor_bearing >= 0 && Anchor_bearing <= 360) {
-      const vesselPositionCoords = { latitude: real_time_vessel.lat, longitude: real_time_vessel.long };
-      const anchorPositionCoords = geod.Direct(vesselPositionCoords.latitude, vesselPositionCoords.longitude, Anchor_bearing, Anchor_distance); 
-      setLatitude(anchorPositionCoords.lat2);
-      setLongitude(anchorPositionCoords.lon2);
-      setBearing(Anchor_bearing);
-    } else {
-      alert("Please enter valid distance (>= 0) and bearing (0 - 360) values.");
-    }
+  const [connection, setConnection] = useState(false);
+
+  FlaskWebsocket.onopen = () => {
+    console.log("Websocket connected");
+    FlaskWebsocket.send("Hello from React!");
+    setConnection(true);
   };
 
-// Here listen to GPS data and send it to the Figure component, and also exchange data between websockets
-useEffect(() => {
-});
+  FlaskWebsocket.onmessage = (message) => {
+    console.log(message);
+  };
+
+  useEffect(() =>{
+    if (connection){
+      FlaskWebsocket.send("update")
+      console.log("update sent")
+      FlaskWebsocket.send('{"radius":'+radius+',"arcRadius":'+arcRadius+',"angleSwipe":'+angleSwipe+',"swipe":'+swipe+',"longitude":'+longitude+',"latitude":'+latitude+'}')
+      console.log("lat and long sent")
+    }
+  }, [radius, arcRadius, angleSwipe, swipe, longitude, latitude])
 
   return (
     <div className="App" style={{ margin: 0, padding: "0px 0" }}>
@@ -68,20 +75,19 @@ useEffect(() => {
             <h1 style={{ margin: 0, padding: "0px 0" }}>Anchorage Mode</h1>
 
             {/* Render the InputTable component inside the inner wrapper */}
-              {/* This component contains the user input table (anchor position and anchor area)*/}
+            {/* This component contains the user input table (anchor position and anchor area)*/}
             <InputTable
               longitude={longitude}
               setLongitude={setLongitude}
               latitude={latitude}
               setLatitude={setLatitude}
-              handleUseCurrentPosition={handleUseCurrentPosition}
-              handleApplyValues={handleApplyValues}
               Anchor_bearing={Anchor_bearing}
               Anchor_distance={Anchor_distance}
               setBearing={setBearing}
               setDistance={setDistance}
               mapClickActive={mapClickActive}
-              
+              setMapClickActive={setMapClickActive}
+              real_time_vessel={real_time_vessel}
               radius={radius}
               setRadius={setRadius}
               arcRadius={arcRadius}
@@ -96,21 +102,30 @@ useEffect(() => {
             <Figure
               latitude={latitude}
               longitude={longitude}
+              setLatitude={setLatitude}
+              setLongitude={setLongitude}
               radius={radius}
               arcRadius={arcRadius}
               swipe={swipe}
               angleSwipe={angleSwipe}
               real_time_vessel={real_time_vessel}
+              setRealVesselPosition={setRealVesselPosition}
               Anchor_distance={Anchor_distance}
+              setDistance={setDistance}
               Anchor_Bearing={Anchor_bearing}
-            >
-            </Figure>
-
+              setBearing={setBearing}
+              heading={heading}
+              mapClickActive={mapClickActive}
+              setMapClickActive={setMapClickActive}
+            ></Figure>
+            <FigureTable
+              Anchor_distance={Anchor_distance}
+              Anchor_bearing={Anchor_bearing}
+              radius={radius}
+              arcRadius={arcRadius}
+            ></FigureTable>
             {/* This component contains the instructions + alarm information + gps information + trajectory history*/}
-            <Menu>
-
-            </Menu>
-
+            <Menu></Menu>
           </header>
         </div>
       </div>

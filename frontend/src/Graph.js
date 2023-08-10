@@ -510,6 +510,7 @@ svg
         }
         setMapClickActive(false);
       };
+
       // Handles Relative Position Inputs
       const handleApplyValues = () => {
         if (Anchor_distance >= 0 && Anchor_bearing >= 0 && Anchor_bearing <= 360) {

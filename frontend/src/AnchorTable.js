@@ -1,23 +1,54 @@
 import Tablelines from "./Tablelines";
 import { useState, useEffect } from "react";
+// initialize the geodesic module
+var geodesic = require("geographiclib-geodesic"),
+  geod = geodesic.Geodesic.WGS84;
 
 const AnchorTable = ({
-  // Anchor Position Based on Current GPS Position
-  handleUseCurrentPosition,
-  // Anchor Position Based on Distance and Bearing
-  handleApplyValues,
   Anchor_bearing,
   Anchor_distance,
   setBearing,
   setDistance,
+  real_time_vessel,
   // Anchor Position Based on Map Click
   mapClickActive, // boolean to check if map click is active to set anchor
+  setMapClickActive,
   longitude, // anchor position to draw on graph
   setLongitude,
   setLatitude,
   latitude, // anchor position to draw on graph
 }) => {
   const [showRelativePosition, setShowRelativePosition] = useState(false);
+  useEffect(() => {
+    console.log(mapClickActive);
+  });
+
+  // Function to use current vessel position as anchor position
+  const handleUseCurrentPosition = () => {
+    setLatitude(real_time_vessel.lat);
+    setLongitude(real_time_vessel.long);
+  };
+  // Function to handle the Apply Relative Position button in the AnchorTable
+  const handleApplyValues = () => {
+    if (Anchor_distance >= 0 && Anchor_bearing >= 0 && Anchor_bearing <= 360) {
+      const vesselPositionCoords = {
+        latitude: real_time_vessel.lat,
+        longitude: real_time_vessel.long,
+      };
+      const anchorPositionCoords = geod.Direct(
+        vesselPositionCoords.latitude,
+        vesselPositionCoords.longitude,
+        Anchor_bearing,
+        Anchor_distance
+      );
+      setLatitude(anchorPositionCoords.lat2);
+      setLongitude(anchorPositionCoords.lon2);
+      setBearing(Anchor_bearing);
+    } else {
+      alert("Please enter valid distance (>= 0) and bearing (0 - 360) values.");
+    }
+  };
+
   return (
     <div>
       <Tablelines>
@@ -71,7 +102,7 @@ const AnchorTable = ({
       )}
       <br></br>
       <Tablelines>
-        <button onClick={() => !mapClickActive}>
+        <button onClick={() => setMapClickActive(!mapClickActive)}>
           Set Anchor Position on Map
         </button>
       </Tablelines>

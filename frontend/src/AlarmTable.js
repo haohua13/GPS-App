@@ -18,7 +18,6 @@ const AlarmTable = ({
   const [SwingingRadius, setSwingingRadius] = useState(0);
 
   const handleVesselLength = (value) => {
-    console.log(value);
     setVesselLength(value);
   };
   const handleChainLength = (value) => {
@@ -139,12 +138,12 @@ const AlarmTable = ({
         [meters]
       </Tablelines>
       <Tablelines>
-      <input
-              type="range"
-              max={arcRadius}
-              value={radius}
-              onChange={(e) => handleRadiusChange(parseFloat(e.target.value))}
-            />
+        <input
+          type="range"
+          max={arcRadius}
+          value={radius}
+          onChange={(e) => handleRadiusChange(parseFloat(e.target.value))}
+        />
       </Tablelines>
       <br></br>
       <Tablelines>

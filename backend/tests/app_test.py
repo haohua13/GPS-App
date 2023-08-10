@@ -1,5 +1,5 @@
-from flask import Flask, render_template
-from flask_socketio import SocketIO
+from flask import Flask, render_template, request
+from flask_socketio import SocketIO, emit
 import threading
 import os
 import json
@@ -7,10 +7,11 @@ from datetime import datetime
 import websocket
 from flask_cors import CORS
 from gps_alarm import Vessel
-app = Flask(__name__)
-socketio = SocketIO(app,cors_allowed_origins="*")
-CORS(app)
 
+app = Flask(__name__)
+app.config['SECRET_KEY'] = 'secret!'
+CORS(app,resources={r"/*":{"origins":"*"}})
+socketio = SocketIO(app,cors_allowed_origins="*")
 
 SENTRY_IP = '172.17.86.72'
 directory_to_save = os.path.join("C:\\", "Users", "haohu", "GPS-APP", "tests", "test1")
@@ -34,14 +35,8 @@ def handle_user_data(data):
     angleswipe = data.get('angleSwipe')
     my_vessel.define_anchor_area(anchor_lat, anchor_long, radius, arc_radius, swipe, angleswipe)
     print(f'Anchor Area Parameters Updated: {anchor_lat}, {anchor_long}, {radius}, {arc_radius}, {swipe}, {angleswipe}')
-
-# get user data from React frontend
-@socketio.on('user_data')
-def handle_user_data_from_frontend(data):
-    # Keep updating the user information
-    handle_user_data(data)
-
-# gets message from Sentry webSocket and sends it to React frontend
+    
+# gets message from Sentry webSocket
 def on_message(ws, message):
     current_message = json.loads(message)
     lat = current_message.get('boatbus', {}).get('lat')
@@ -55,15 +50,13 @@ def on_message(ws, message):
     if (anc1 !=0) and (anc2 !=0):
         alarm_1, alarm_2 = my_vessel.read_message(current_message)    
     # Save the message to a JSON file
-    # Send GPS data to the frontend over WebSocket
-    socketio.emit('gps_data', {'lat': lat, 'long': long, 'time': time, 'heading': heading, 'alarm_1': alarm_1, 'alarm_2': alarm_2})
+    # Send GPS data to the frontend over socketio
+    emit('gps_data', {'lat': lat, 'long': long, 'time': time, 'heading': heading, 'alarm_1': alarm_1, 'alarm_2': alarm_2})
     if (alarm_2 == True):
         print('Alarm 2')
         reset_and_run_algorithm()
     with open(os.path.join(directory_to_save, '{}.json'.format(datetime.timestamp(datetime.now()))), 'w') as fp:
         fp.write(message)
-    
-
 def on_error(ws, error):
     print(error)
 

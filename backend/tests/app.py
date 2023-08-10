@@ -12,10 +12,9 @@ from gps_alarm import Vessel
 app = Flask(__name__)
 # secret key for Flask app
 app.config['SECRET_KEY'] = 'secret!'
-# enable CORS to allow communication between React frontend and Flask backend
-CORS(app,resources={r"/*":{"origins":"*"}})
 # create instance of SocketIO to allow CORS for all origins '*'
 socketio = SocketIO(app,cors_allowed_origins="*")
+
 
 
 SENTRY_IP = '172.17.86.72'
@@ -33,10 +32,8 @@ def reset_and_run_algorithm():
 
 @socketio.on('connect')
 def connected():
-    """event listener when client(user) connects to the server"""
-    print(request.sid)
     print('Client connected')
-    emit("connect",{"data":f"id: {request.sid} is connected"})
+    emit('connect',f"User {request.sid} connected",broadcast=True)
 
 @socketio.on('data')
 def handle_message(data):
