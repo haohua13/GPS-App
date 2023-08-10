@@ -24,6 +24,7 @@ const InputTable = ({
   angleSwipe,   // angle swipe to put on the graph
   setSwipe, // state to set the swipe
   swipe, // swipe to put on the graph
+  disabled, // boolean to check if the alarm is disabled
 }) => {
   return (
     <div>
@@ -39,6 +40,7 @@ const InputTable = ({
         latitude={latitude}
         setLatitude={setLatitude}
         real_time_vessel = {real_time_vessel}
+        disabled={disabled}
       ></AnchorTable>
       <AlarmTable
         setRadius={setRadius}
@@ -49,6 +51,7 @@ const InputTable = ({
         angleSwipe={angleSwipe}
         setSwipe={setSwipe}
         swipe={swipe}
+        disabled={disabled}
       ></AlarmTable>
     </div>
   );

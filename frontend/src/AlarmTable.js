@@ -10,6 +10,7 @@ const AlarmTable = ({
   angleSwipe,
   setSwipe,
   swipe,
+  disabled,
 }) => {
   const [showParameters, setShowParameters] = useState(false);
   const [VesselLength, setVesselLength] = useState(0);
@@ -76,7 +77,10 @@ const AlarmTable = ({
       </Tablelines>
       <br></br>
       <Tablelines>
-        <button onClick={() => setShowParameters(!showParameters)}>
+        <button
+          disabled={disabled}
+          onClick={() => setShowParameters(!showParameters)}
+        >
           Area Estimate
         </button>
       </Tablelines>
@@ -92,6 +96,7 @@ const AlarmTable = ({
             Vessel Length:
             <input
               min={0}
+              disabled={disabled}
               type="number"
               value={VesselLength}
               onChange={(e) => handleVesselLength(parseFloat(e.target.value))}
@@ -102,6 +107,7 @@ const AlarmTable = ({
           <Tablelines>
             Chain Length:
             <input
+              disabled={disabled}
               min={DepthOfWater}
               type="number"
               value={ChainLength}
@@ -114,6 +120,7 @@ const AlarmTable = ({
             Water Depth:
             <input
               min={0}
+              disabled={disabled}
               type="number"
               max={ChainLength + VesselLength}
               value={DepthOfWater}
@@ -123,7 +130,9 @@ const AlarmTable = ({
           </Tablelines>
           <br></br>
           <Tablelines>
-            <button onClick={handleParameters}>Set Area</button>
+            <button disabled={disabled} onClick={handleParameters}>
+              Set Area
+            </button>
           </Tablelines>
         </>
       )}
@@ -132,6 +141,7 @@ const AlarmTable = ({
         Inner Radius:
         <input
           type="number"
+          disabled={disabled}
           value={radius}
           onChange={(e) => setRadius(parseFloat(e.target.value))}
         />
@@ -140,6 +150,7 @@ const AlarmTable = ({
       <Tablelines>
         <input
           type="range"
+          disabled={disabled}
           max={arcRadius}
           value={radius}
           onChange={(e) => handleRadiusChange(parseFloat(e.target.value))}
@@ -150,6 +161,7 @@ const AlarmTable = ({
         Outer Radius:
         <input
           type="number"
+          disabled={disabled}
           min={radius}
           value={arcRadius}
           onChange={(e) => handleArcRadiusChange(parseFloat(e.target.value))}
@@ -159,6 +171,7 @@ const AlarmTable = ({
       <Tablelines>
         <input
           type="range"
+          disabled={disabled}
           min={radius}
           max="100"
           value={arcRadius}
@@ -170,6 +183,7 @@ const AlarmTable = ({
         Angle Interval Δ = {360 - angleSwipe} degrees:
         <input
           type="range"
+          disabled={disabled}
           min="0"
           max="360"
           value={angleSwipe}
@@ -181,6 +195,7 @@ const AlarmTable = ({
         Swipe = {swipe} degrees:
         <input
           type="range"
+          disabled={disabled}
           min="0"
           max="360"
           value={swipe}

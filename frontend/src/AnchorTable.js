@@ -17,6 +17,7 @@ const AnchorTable = ({
   setLongitude,
   setLatitude,
   latitude, // anchor position to draw on graph
+  disabled, // boolean to check if the alarm is disabled
 }) => {
   const [showRelativePosition, setShowRelativePosition] = useState(false);
   useEffect(() => {
@@ -56,11 +57,16 @@ const AnchorTable = ({
       </Tablelines>
       <br></br>
       <Tablelines>
-        <button onClick={handleUseCurrentPosition}>Current Position</button>
+        <button onClick={handleUseCurrentPosition} disabled={disabled}>
+          Current Position
+        </button>
       </Tablelines>
       <br></br>
       <Tablelines>
-        <button onClick={() => setShowRelativePosition(!showRelativePosition)}>
+        <button
+          onClick={() => setShowRelativePosition(!showRelativePosition)}
+          disabled={disabled}
+        >
           Relative Position
         </button>
       </Tablelines>
@@ -73,6 +79,7 @@ const AnchorTable = ({
               type="number"
               min={0}
               value={Anchor_distance}
+              disabled={disabled}
               onChange={(e) => setDistance(parseFloat(e.target.value))}
             />
             [meters]
@@ -81,6 +88,7 @@ const AnchorTable = ({
           <Tablelines>
             Bearing:
             <input
+              disabled={disabled}
               type="number"
               value={Anchor_bearing}
               onChange={(e) => setBearing(parseFloat(e.target.value))}
@@ -90,6 +98,7 @@ const AnchorTable = ({
           <br></br>
           <Tablelines>
             <button
+              disabled={disabled}
               onClick={() => {
                 handleApplyValues(); // Call the handleApplyValues function
                 setShowRelativePosition(!showRelativePosition); // Toggle the showRelativePosition state
@@ -102,7 +111,10 @@ const AnchorTable = ({
       )}
       <br></br>
       <Tablelines>
-        <button onClick={() => setMapClickActive(!mapClickActive)}>
+        <button
+          disabled={disabled}
+          onClick={() => setMapClickActive(!mapClickActive)}
+        >
           Set Anchor Position on Map
         </button>
       </Tablelines>
@@ -110,6 +122,7 @@ const AnchorTable = ({
       <Tablelines>
         Longitude:
         <input
+          disabled={disabled}
           type="number"
           value={longitude}
           onChange={(e) => setLongitude(parseFloat(e.target.value))}
@@ -120,6 +133,7 @@ const AnchorTable = ({
       <Tablelines>
         Latitude:
         <input
+          disabled={disabled}
           type="number"
           value={latitude}
           onChange={(e) => setLatitude(parseFloat(e.target.value))}

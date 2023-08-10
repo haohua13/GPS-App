@@ -5,13 +5,11 @@ import os
 import json
 from datetime import datetime
 import websocket
-from flask_cors import CORS
 from gps_alarm import Vessel
+import asyncio
+import websockets
 
-app = Flask(__name__)
-app.config['SECRET_KEY'] = 'secret!'
-CORS(app,resources={r"/*":{"origins":"*"}})
-socketio = SocketIO(app,cors_allowed_origins="*")
+connected_clients = set()  # Store connected client WebSocket objects
 
 SENTRY_IP = '172.17.86.72'
 directory_to_save = os.path.join("C:\\", "Users", "haohu", "GPS-APP", "tests", "test1")
@@ -24,21 +22,11 @@ my_vessel = Vessel(0)
 def reset_and_run_algorithm():
     global my_vessel
     my_vessel = Vessel(0)  # Reset the algorithm with the updated information
-
-# handles user data from React frontend
-def handle_user_data(data):
-    anchor_lat = data.get('latitude')
-    anchor_long = data.get('longitude')
-    radius = data.get('radius')
-    arc_radius = data.get('arcRadius')
-    swipe = data.get('swipe')
-    angleswipe = data.get('angleSwipe')
-    my_vessel.define_anchor_area(anchor_lat, anchor_long, radius, arc_radius, swipe, angleswipe)
-    print(f'Anchor Area Parameters Updated: {anchor_lat}, {anchor_long}, {radius}, {arc_radius}, {swipe}, {angleswipe}')
     
 # gets message from Sentry webSocket
 def on_message(ws, message):
     current_message = json.loads(message)
+    print(current_message)
     lat = current_message.get('boatbus', {}).get('lat')
     long = current_message.get('boatbus', {}).get('long')
     time = current_message.get('boatbus_timestamp')
@@ -51,7 +39,14 @@ def on_message(ws, message):
         alarm_1, alarm_2 = my_vessel.read_message(current_message)    
     # Save the message to a JSON file
     # Send GPS data to the frontend over socketio
-    emit('gps_data', {'lat': lat, 'long': long, 'time': time, 'heading': heading, 'alarm_1': alarm_1, 'alarm_2': alarm_2})
+    GPS_data = {
+        'lat': lat,
+        'long': long,
+        'time': time,
+        'heading': heading,
+        'alarm_1': alarm_1,
+        'alarm_2': alarm_2
+    }
     if (alarm_2 == True):
         print('Alarm 2')
         reset_and_run_algorithm()
@@ -80,10 +75,5 @@ def handle_real_time_data():
 data_thread = threading.Thread(target=handle_real_time_data)
 data_thread.daemon = True
 data_thread.start()
-
-@app.route('/')
-def index():
-    return render_template('index.html')
-
 if __name__ == "__main__":
-    socketio.run(app, debug=True, port = 5000)
+    handle_real_time_data()

@@ -7,15 +7,15 @@ import Menu from "./Menu";
 import "./styles.css"; // Import the CSS file
 // Importing modules
 import React, { useState, useEffect } from "react";
-import {FlaskConnection} from "./WebsocketURL";
+import { FlaskConnection } from "./WebsocketURL";
 
 // initialize the geodesic module
 var geodesic = require("geographiclib-geodesic"),
   geod = geodesic.Geodesic.WGS84;
 
 const FlaskWebsocket = new WebSocket(
-    'ws://'+FlaskConnection.IP + ":" + FlaskConnection.port
-  );
+  "ws://" + FlaskConnection.IP + ":" + FlaskConnection.port
+);
 
 const App = () => {
   // For AnchorTable
@@ -40,6 +40,16 @@ const App = () => {
 
   const [connection, setConnection] = useState(false);
 
+  const [alarmStatus, setAlarmStatus] = useState(false);
+
+  const handleAlarm = () => {
+    if (alarmStatus === false) {
+      setAlarmStatus(true);
+    } else {
+      setAlarmStatus(false);
+    }
+  };
+
   FlaskWebsocket.onopen = () => {
     console.log("Websocket connected");
     FlaskWebsocket.send("Hello from React!");
@@ -50,14 +60,39 @@ const App = () => {
     console.log(message);
   };
 
-  useEffect(() =>{
-    if (connection){
-      FlaskWebsocket.send("update")
-      console.log("update sent")
-      FlaskWebsocket.send('{"radius":'+radius+',"arcRadius":'+arcRadius+',"angleSwipe":'+angleSwipe+',"swipe":'+swipe+',"longitude":'+longitude+',"latitude":'+latitude+'}')
-      console.log("lat and long sent")
+  // message obtained from the server
+  FlaskWebsocket.onmessage = (event) => {
+    const messageFromServer = event.data;
+    console.log("Received message from server:", messageFromServer);
+  };
+
+
+  useEffect(() => {
+    // only update user data when alarm is off
+    if (!alarmStatus) {
+      console.log("Configurations of Alarm");
+      if (connection) {
+        FlaskWebsocket.send("update");
+        // send anchor position and anchor area to backend
+        FlaskWebsocket.send(
+          '{"radius":' +
+            radius +
+            ',"arcRadius":' +
+            arcRadius +
+            ',"angleSwipe":' +
+            angleSwipe +
+            ',"swipe":' +
+            swipe +
+            ',"longitude":' +
+            longitude +
+            ',"latitude":' +
+            latitude +
+            "}"
+        );
+        console.log("User data sent");
+      }
     }
-  }, [radius, arcRadius, angleSwipe, swipe, longitude, latitude])
+  }, [radius, arcRadius, angleSwipe, swipe, longitude, latitude, alarmStatus]);
 
   return (
     <div className="App" style={{ margin: 0, padding: "0px 0" }}>
@@ -96,7 +131,14 @@ const App = () => {
               setAngleSwipe={setAngleSwipe}
               swipe={swipe}
               setSwipe={setSwipe}
+              disabled = {alarmStatus}
             ></InputTable>
+            {!alarmStatus ? (
+                <button onClick={handleAlarm}>Set Alarm</button>
+            ) : (
+                <button onClick={handleAlarm}>Turn Alarm Off</button>
+            ) 
+              }
             {/* Render the Figure component inside the inner wrapper */}
             {/* This component contains the figure and figure information*/}
             <Figure
