@@ -60,13 +60,6 @@ const App = () => {
     console.log(message);
   };
 
-  // message obtained from the server
-  FlaskWebsocket.onmessage = (event) => {
-    const messageFromServer = event.data;
-    console.log("Received message from server:", messageFromServer);
-  };
-
-
   useEffect(() => {
     // only update user data when alarm is off
     if (!alarmStatus) {

@@ -47,9 +47,12 @@ def on_message(ws, message):
         'alarm_1': alarm_1,
         'alarm_2': alarm_2
     }
+    
+
     if (alarm_2 == True):
         print('Alarm 2')
         reset_and_run_algorithm()
+        exit()
     with open(os.path.join(directory_to_save, '{}.json'.format(datetime.timestamp(datetime.now()))), 'w') as fp:
         fp.write(message)
 def on_error(ws, error):
@@ -75,5 +78,23 @@ def handle_real_time_data():
 data_thread = threading.Thread(target=handle_real_time_data)
 data_thread.daemon = True
 data_thread.start()
+
+
+# create handler for each connection
+'''
+async def handler(websocket, path):
+    while True:
+        data = await websocket.recv()
+        reply = f"User Data received as: {data}!"
+        await websocket.send(reply)
+        
+start_server = websockets.serve(handler, "localhost", 5000)
+asyncio.get_event_loop().run_until_complete(start_server)
+asyncio.get_event_loop().run_forever() '''
+
+
 if __name__ == "__main__":
     handle_real_time_data()
+
+
+
