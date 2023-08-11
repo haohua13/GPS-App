@@ -8,6 +8,7 @@ import "./styles.css"; // Import the CSS file
 // Importing modules
 import React, { useState, useEffect } from "react";
 import { FlaskConnection } from "./WebsocketURL";
+import {io} from "socket.io-client";
 
 // initialize the geodesic module
 var geodesic = require("geographiclib-geodesic"),
@@ -40,6 +41,7 @@ const App = () => {
 
   const [connection, setConnection] = useState(false);
 
+  // set alarm status for user data update control
   const [alarmStatus, setAlarmStatus] = useState(false);
 
   const handleAlarm = () => {
@@ -67,21 +69,16 @@ const App = () => {
       if (connection) {
         FlaskWebsocket.send("update");
         // send anchor position and anchor area to backend
-        FlaskWebsocket.send(
-          '{"radius":' +
-            radius +
-            ',"arcRadius":' +
-            arcRadius +
-            ',"angleSwipe":' +
-            angleSwipe +
-            ',"swipe":' +
-            swipe +
-            ',"longitude":' +
-            longitude +
-            ',"latitude":' +
-            latitude +
-            "}"
-        );
+        let obj = {
+          radius: radius,
+          arcRadius: arcRadius,
+          angleSwipe: angleSwipe,
+          swipe: swipe,
+          longitude: longitude,
+          latitude: latitude,
+        };
+
+        FlaskWebsocket.send(JSON.stringify(obj));
         console.log("User data sent");
       }
     }
@@ -124,14 +121,13 @@ const App = () => {
               setAngleSwipe={setAngleSwipe}
               swipe={swipe}
               setSwipe={setSwipe}
-              disabled = {alarmStatus}
+              disabled={alarmStatus}
             ></InputTable>
             {!alarmStatus ? (
-                <button onClick={handleAlarm}>Set Alarm</button>
+              <button onClick={handleAlarm}>Set Alarm</button>
             ) : (
-                <button onClick={handleAlarm}>Turn Alarm Off</button>
-            ) 
-              }
+              <button onClick={handleAlarm}>Turn Alarm Off</button>
+            )}
             {/* Render the Figure component inside the inner wrapper */}
             {/* This component contains the figure and figure information*/}
             <Figure

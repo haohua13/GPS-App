@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request
-from flask_socketio import SocketIO, emit
+from flask_socketio import SocketIO, emit, send
 import threading
 import os
 import json
@@ -8,8 +8,11 @@ import websocket
 from gps_alarm import Vessel
 import asyncio
 import websockets
+from data import Data
 
-connected_clients = set()  # Store connected client WebSocket objects
+app = Flask(__name__)
+app.config['SECRET_KEY'] = 'secret!'
+socketio = SocketIO(app, cors_allowed_origins="*")
 
 SENTRY_IP = '172.17.86.72'
 directory_to_save = os.path.join("C:\\", "Users", "haohu", "GPS-APP", "tests", "test1")
@@ -17,6 +20,7 @@ os.makedirs(directory_to_save, exist_ok=True)
 
 # initialize the Vessel class
 my_vessel = Vessel(0)
+data_class = Data()
 
 # reset the information in the Vessel class
 def reset_and_run_algorithm():
@@ -47,7 +51,7 @@ def on_message(ws, message):
         'alarm_1': alarm_1,
         'alarm_2': alarm_2
     }
-    
+    websocket.send(json.dumps(GPS_data))
 
     if (alarm_2 == True):
         print('Alarm 2')
@@ -81,7 +85,6 @@ data_thread.start()
 
 
 # create handler for each connection
-'''
 async def handler(websocket, path):
     while True:
         data = await websocket.recv()
@@ -90,11 +93,11 @@ async def handler(websocket, path):
         
 start_server = websockets.serve(handler, "localhost", 5000)
 asyncio.get_event_loop().run_until_complete(start_server)
-asyncio.get_event_loop().run_forever() '''
-
+asyncio.get_event_loop().run_forever() 
 
 if __name__ == "__main__":
     handle_real_time_data()
+    
 
 
 

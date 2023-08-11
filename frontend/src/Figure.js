@@ -6,6 +6,7 @@ import { ReactComponent as MapBoatIcon } from "./images/map-boat.svg";
 import Anchor_Alarm from "./images/danger-alarm.mp3";
 import AnchorIcon from "./images/anchor.svg.png";
 import Compass from "./images/compass.png";
+import {ReactComponent as compass_01_v} from "./images/compass_01_v.svg";
 
 const boatIconSVG = `
 <svg width="30" height="62" viewBox="0 0 30 62" fill="none" xmlns="http://www.w3.org/2000/svg">
