@@ -1,0 +1,4 @@
+deriva
+anchor
+stop
+break

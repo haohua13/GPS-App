@@ -1,0 +1,16 @@
+.input-table-container {
+  display: flex;
+  justify-content: space-between;
+  gap: 30px; /* Adjust the gap between columns as needed */
+  background-color: #ABD1B5;
+  border: 1px solid black; /* Add this line to set the border */
+  margin-bottom: 20px; /* Add margin to create space below */
+
+}
+
+.anchor_table-column {
+  flex: 1;
+}
+.alarm_table-column {
+    flex: 1;
+  }

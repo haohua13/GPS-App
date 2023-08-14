@@ -1,6 +1,7 @@
 import Tablelines from "./Tablelines";
 import AlarmTable from "./AlarmTable";
 import AnchorTable from "./AnchorTable";
+import './InputTable.css'; // Import your CSS file for styling if needed
 
 const InputTable = ({
   // AnchorTable
@@ -28,6 +29,8 @@ const InputTable = ({
 }) => {
   return (
     <div>
+      <div className="input-table-container">
+      <div className="anchor_table-column">
       <AnchorTable
         Anchor_bearing={Anchor_bearing}
         Anchor_distance={Anchor_distance}
@@ -42,6 +45,8 @@ const InputTable = ({
         real_time_vessel = {real_time_vessel}
         disabled={disabled}
       ></AnchorTable>
+      </div>
+      <div className = "alarm_table-column">
       <AlarmTable
         setRadius={setRadius}
         radius={radius}
@@ -53,6 +58,8 @@ const InputTable = ({
         swipe={swipe}
         disabled={disabled}
       ></AlarmTable>
+      </div>
+      </div>
     </div>
   );
 };

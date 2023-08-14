@@ -6,6 +6,9 @@
   height: 40vmin;
   pointer-events: none;
 }
+.App-container {
+  background-color: #D6EFFF;
+}
 
 @media (prefers-reduced-motion: no-preference) {
   .App-logo {
@@ -34,4 +37,65 @@
   to {
     transform: rotate(360deg);
   }
+}
+
+.App-title {
+  background-color: #1B1F3B;
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 50px;
+}
+
+.App-title h1 {
+  margin: 0;
+  padding: 0;
+  color: white;
+}
+
+.Input-table{
+  background-color: #FEFEFF;
+  border: 1px solid black; /* Add this line to set the border */
+
+}
+.alarm_button{
+  display: block;
+  border: 1px solid black; /* Add this line to set the border */
+  border-radius: 20px;
+  background-color: #04AA6D;
+  padding: 14px 28px;
+  font-size: 16px;
+  cursor: pointer;
+  text-align: center;
+}
+.alarm_button_2{
+  display: block;
+  border: 1px solid black; /* Add this line to set the border */
+  border-radius: 20px;
+  background-color: #ff0000;
+  padding: 14px 28px;
+  font-size: 16px;
+  cursor: pointer;
+  text-align: center;
+
+}
+.figure-layout-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px; /* Adjust this for spacing between columns */
+}
+
+.menu-column,
+.instructions-column {
+  flex: 1;
+  padding: 50px;
+  background-color: #FEFEFF;
+  border: 1px solid black; /* Add this line to set the border */
+}
+
+.figure-column {
+  flex: 3;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }

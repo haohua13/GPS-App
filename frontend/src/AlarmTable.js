@@ -143,6 +143,7 @@ const AlarmTable = ({
           type="number"
           disabled={disabled}
           value={radius}
+          max={arcRadius}
           onChange={(e) => setRadius(parseFloat(e.target.value))}
         />
         [meters]
@@ -173,7 +174,7 @@ const AlarmTable = ({
           type="range"
           disabled={disabled}
           min={radius}
-          max="100"
+          max="50"
           value={arcRadius}
           onChange={(e) => handleArcRadiusChange(parseFloat(e.target.value))}
         />

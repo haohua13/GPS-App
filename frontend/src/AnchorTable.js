@@ -1,5 +1,6 @@
 import Tablelines from "./Tablelines";
 import { useState, useEffect } from "react";
+import AnchorIcon from "./images/anchor.svg.png";
 // initialize the geodesic module
 var geodesic = require("geographiclib-geodesic"),
   geod = geodesic.Geodesic.WGS84;
@@ -140,6 +141,17 @@ const AnchorTable = ({
         />
         [º]
       </Tablelines>
+      <img
+        src={AnchorIcon}
+        alt="Anchor Icon"
+        style={{
+          padding: '50px',
+          width: '100px',
+          height: 'auto',
+          opacity: 1.5, // Set the opacity value here
+        }}
+      />
+
     </div>
   );
 };

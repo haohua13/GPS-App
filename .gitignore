@@ -1,2 +1,4 @@
-GPS-App/tests
-GPS-App/tests/test1
+tests/
+/GPS-App/tests/test1
+/tests/
+/tests

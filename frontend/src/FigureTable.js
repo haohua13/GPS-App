@@ -1,10 +1,28 @@
 import React, { useEffect, useState, useRef } from "react";
-import * as d3 from "d3";
 import Tablelines from "./Tablelines";
+import { ReactComponent as MapBoatIcon } from "./images/map-boat.svg";
 
-const FigureTable = ({ Anchor_distance, Anchor_bearing, radius, arcRadius }) => {
+const FigureTable = ({
+  real_time_vessel,
+  Anchor_distance,
+  Anchor_bearing,
+  radius,
+  arcRadius,
+}) => {
   return (
     <div>
+      <Tablelines>
+        <MapBoatIcon />
+      </Tablelines>
+      <Tablelines>
+        <strong>Vessel Position:</strong>
+      </Tablelines>
+      <Tablelines style={{ color: "black" }}>
+        Real-Time Longitude: {real_time_vessel.long.toFixed(6)}
+      </Tablelines>
+      <Tablelines style={{ color: "black" }}>
+        Real-Time Latitude: {real_time_vessel.lat.toFixed(6)}
+      </Tablelines>
       {Anchor_distance !== 0 && (
         <Tablelines>
           <Tablelines>
