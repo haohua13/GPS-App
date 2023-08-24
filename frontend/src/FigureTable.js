@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import Tablelines from "./Tablelines";
 import { ReactComponent as MapBoatIcon } from "./images/map-boat.svg";
+import "./FigureTable.css";
 
 const FigureTable = ({
   real_time_vessel,
@@ -17,6 +18,7 @@ const FigureTable = ({
       <Tablelines>
         <strong>Vessel Position:</strong>
       </Tablelines>
+      <div className = "figure_table-container">
       <Tablelines style={{ color: "black" }}>
         Real-Time Longitude: {real_time_vessel.long.toFixed(6)}
       </Tablelines>
@@ -40,6 +42,7 @@ const FigureTable = ({
           </Tablelines>
         </Tablelines>
       )}
+      </div>
     </div>
   );
 };

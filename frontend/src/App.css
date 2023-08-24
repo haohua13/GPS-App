@@ -91,6 +91,7 @@
   padding: 50px;
   background-color: #FEFEFF;
   border: 1px solid black; /* Add this line to set the border */
+  font-size:20px;
 }
 
 .figure-column {

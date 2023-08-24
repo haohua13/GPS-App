@@ -50,7 +50,7 @@ class Vessel():
         self.alarm_lv2 = False
 
         # User Defined Parameters
-        self.time_interval = 2 # sample time in seconds
+        self.time_interval = 1 # sample time in seconds
         self.gps_time_out_tolerance = 60 # GPS disconnection time tolerance in seconds
         self.gps_accuracy = 3 # GPS accuracy
         self.disconnect_bound = 10 # number of consecutive disconnection readings ('NaN')

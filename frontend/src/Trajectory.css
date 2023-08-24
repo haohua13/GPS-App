@@ -1,0 +1,23 @@
+
+.start_saving-button, .stop_saving-button{
+    border: 1px solid black; /* Add this line to set the border */
+    border-radius: 10px;
+    background-color: #719eec;
+    padding: 14px 28px;
+    font-size: 14px;
+    cursor: pointer;
+    text-align: center;
+}
+
+.saved_positions{
+  border: 1px solid black; /* Add this line to set the border */
+  border-radius: 20px;
+  background-color: #3574bd;
+  padding: 14px 28px;
+  font-size: 16px;
+  cursor: pointer;
+  text-align: center;
+}
+.position_history{
+    font-size:12px;
+}

@@ -12,7 +12,7 @@ import websockets
 from data import Data
 from websockets.sync.client import connect
 SENTRY_IP = '172.17.86.72'
-directory_to_save = os.path.join("C:\\", "Users", "haohu", "GPS-APP", "tests", "test1")
+directory_to_save = os.path.join("C:\\", "Users", "haohu", "GPS-APP", "tests", "new_test_23_08")
 os.makedirs(directory_to_save, exist_ok=True)
 
 
@@ -35,6 +35,12 @@ def on_message(ws, message):
     long = current_message.get('boatbus', {}).get('long')
     time = pd.to_datetime(current_message['boatbus_timestamp'], unit='ms')
     heading = current_message.get('boatbus', {}).get('heading')
+    altitude = current_message.get('gnss', {}).get(7, {}).get('altitude')
+    time = pd.to_datetime(current_message.get('gnss', {}).get(7, {}).get('timestamp'), unit='ms')
+    gnss_method = current_message.get('gnss', {}).get(7, {}).get('gnss_method')
+    n_satellites = current_message.get('gnss', {}).get(7,  {}).get('n_satellites')
+    hdop = current_message.get('gnss', {}).get(7,  {}).get('hdop')
+    pdop = current_message.get('gnss', {}).get(7,  {}).get('pdop')
     alarm_1 = False
     alarm_2 = False
     # reads message in real-time and process it
@@ -50,7 +56,12 @@ def on_message(ws, message):
         'time': time,
         'heading': heading,
         'alarm_1': alarm_1,
-        'alarm_2': alarm_2
+        'alarm_2': alarm_2,
+        'altitude': altitude,
+        'gnss_method': gnss_method,
+        'n_satellites': n_satellites,
+        'hdop': hdop,
+        'pdop': pdop
     }
     data_class.update_gps_data(GPS_data)
     gps_data = data_class.get_gps_data()

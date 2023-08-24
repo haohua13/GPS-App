@@ -1,6 +1,7 @@
 import Tablelines from "./Tablelines";
 import { useState, useEffect } from "react";
 import AnchorIcon from "./images/anchor.svg.png";
+import "./InputTable.css";
 // initialize the geodesic module
 var geodesic = require("geographiclib-geodesic"),
   geod = geodesic.Geodesic.WGS84;
@@ -56,24 +57,25 @@ const AnchorTable = ({
       <Tablelines>
         <strong>Anchor Position:</strong>
       </Tablelines>
-      <br></br>
       <Tablelines>
-        <button onClick={handleUseCurrentPosition} disabled={disabled}>
+        
+        <button               className = "anchor_input-button" onClick={handleUseCurrentPosition} disabled={disabled}>
           Current Position
         </button>
       </Tablelines>
-      <br></br>
+
       <Tablelines>
         <button
+                      className = "anchor_input-button"
           onClick={() => setShowRelativePosition(!showRelativePosition)}
           disabled={disabled}
         >
           Relative Position
         </button>
       </Tablelines>
+      <div className = "relative_position-container">
       {showRelativePosition && (
         <>
-          <br></br>
           <Tablelines>
             Distance:
             <input
@@ -85,7 +87,6 @@ const AnchorTable = ({
             />
             [meters]
           </Tablelines>
-          <br></br>
           <Tablelines>
             Bearing:
             <input
@@ -96,7 +97,6 @@ const AnchorTable = ({
             />
             [degrees]
           </Tablelines>
-          <br></br>
           <Tablelines>
             <button
               disabled={disabled}
@@ -105,21 +105,22 @@ const AnchorTable = ({
                 setShowRelativePosition(!showRelativePosition); // Toggle the showRelativePosition state
               }}
             >
+              
               Set Anchor
             </button>
           </Tablelines>
         </>
-      )}
-      <br></br>
+      )}</div>
       <Tablelines>
         <button
+                      className = "anchor_input-button"
           disabled={disabled}
           onClick={() => setMapClickActive(!mapClickActive)}
         >
           Set Anchor Position on Map
         </button>
       </Tablelines>
-      <br></br>
+      <div className = "anchor_input-container">
       <Tablelines>
         Longitude:
         <input
@@ -133,7 +134,7 @@ const AnchorTable = ({
       <br></br>
       <Tablelines>
         Latitude:
-        <input
+        <input class="latitude_input"
           disabled={disabled}
           type="number"
           value={latitude}
@@ -141,17 +142,8 @@ const AnchorTable = ({
         />
         [º]
       </Tablelines>
-      <img
-        src={AnchorIcon}
-        alt="Anchor Icon"
-        style={{
-          padding: '50px',
-          width: '100px',
-          height: 'auto',
-          opacity: 1.5, // Set the opacity value here
-        }}
-      />
 
+    </div>
     </div>
   );
 };

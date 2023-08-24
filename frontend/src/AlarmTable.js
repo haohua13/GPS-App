@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import Tablelines from "./Tablelines";
+import "./InputTable.css";
 
 const AlarmTable = ({
   setRadius,
@@ -75,15 +76,16 @@ const AlarmTable = ({
       <Tablelines>
         <strong>Anchor Alarm Zone:</strong>
       </Tablelines>
-      <br></br>
       <Tablelines>
         <button
           disabled={disabled}
+          className = "alarm_input-button"
           onClick={() => setShowParameters(!showParameters)}
         >
           Area Estimate
         </button>
       </Tablelines>
+      <div className = "anchor_input-container">
       {showParameters && (
         <>
           <Tablelines>
@@ -91,7 +93,6 @@ const AlarmTable = ({
               The recommended swinging radius is {SwingingRadius} meters.
             </strong>
           </Tablelines>
-          <br></br>
           <Tablelines>
             Vessel Length:
             <input
@@ -103,7 +104,6 @@ const AlarmTable = ({
             />
             [meters]
           </Tablelines>
-          <br></br>
           <Tablelines>
             Chain Length:
             <input
@@ -115,7 +115,6 @@ const AlarmTable = ({
             />
             [meters]
           </Tablelines>
-          <br></br>
           <Tablelines>
             Water Depth:
             <input
@@ -128,7 +127,6 @@ const AlarmTable = ({
             />
             [meters]
           </Tablelines>
-          <br></br>
           <Tablelines>
             <button disabled={disabled} onClick={handleParameters}>
               Set Area
@@ -136,7 +134,6 @@ const AlarmTable = ({
           </Tablelines>
         </>
       )}
-      <br></br>
       <Tablelines>
         Inner Radius:
         <input
@@ -157,7 +154,6 @@ const AlarmTable = ({
           onChange={(e) => handleRadiusChange(parseFloat(e.target.value))}
         />
       </Tablelines>
-      <br></br>
       <Tablelines>
         Outer Radius:
         <input
@@ -179,7 +175,6 @@ const AlarmTable = ({
           onChange={(e) => handleArcRadiusChange(parseFloat(e.target.value))}
         />
       </Tablelines>
-      <br></br>
       <Tablelines>
         Angle Interval Δ = {360 - angleSwipe} degrees:
         <input
@@ -191,7 +186,6 @@ const AlarmTable = ({
           onChange={(e) => handleAngleSwipe(parseFloat(e.target.value))}
         />
       </Tablelines>
-      <br></br>
       <Tablelines>
         Swipe = {swipe} degrees:
         <input
@@ -203,6 +197,7 @@ const AlarmTable = ({
           onChange={(e) => handleSwipe(parseFloat(e.target.value))}
         />
       </Tablelines>
+      </div>
     </div>
   );
 };
