@@ -70,3 +70,25 @@ body {
     font-size:12px;
     background-color:rgb(240, 240, 240);
   }
+  .map_overlay{
+    position: absolute;
+    top:-250px;
+    left:810px;
+  }
+
+  .custom-icon-label {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+  
+  .marker-label {
+    font-size: 14px;
+    font-weight: bold;
+  }
+  .popup{
+    font-size: 10px;
+  }
+  

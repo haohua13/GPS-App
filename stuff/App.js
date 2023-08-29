@@ -7,7 +7,6 @@ import Instructions from "./Instructions";
 import Trajectory from "./Trajectory";
 import MapDemo from "./Map";
 import Alarm from "./Alarm";
-import MapOverlay from "./MapBackground";
 import "./styles.css"; // Import the CSS file
 // Importing modules
 import React, { useState, useEffect } from "react";
@@ -89,7 +88,7 @@ const App = () => {
 
   FlaskWebsocket.onmessage = (message) => {
     // console.log(message);
-    if (message.data.includes("radius")) {
+    if (message.data.inludes("radius")) {
       console.log(message.data);
     }
   };
@@ -207,7 +206,6 @@ const App = () => {
               longitude={longitude}
               real_time_vessel={real_time_vessel}
             ></Trajectory>
-  
             {/* Render the Figure component inside the inner wrapper */}
             {/* This component contains the figure and figure information*/}
             <div className="figure-layout-container">
@@ -215,7 +213,6 @@ const App = () => {
               <div className="instructions-column">
                 <Instructions></Instructions>
               </div>
-              
               <div className="figure-column">
                 <Figure
                   latitude={latitude}
@@ -245,7 +242,6 @@ const App = () => {
                 ></FigureTable>
               </div>
               {/* This component contains the gps information + trajectory history*/}
-              
               <div className="menu-column">
                 <Menu
                   time={time}

@@ -8,7 +8,6 @@ from gps_alarm import Vessel
 import asyncio
 import websockets
 from data import Data
-from websockets.sync.client import connect
 SENTRY_IP = '172.17.86.72'
 directory_to_save = os.path.join("C:\\", "Users", "haohu", "GPS-APP", "tests", "new_test_23_08")
 os.makedirs(directory_to_save, exist_ok=True)
@@ -28,7 +27,6 @@ def reset_and_run_algorithm():
 # gets message from Sentry webSocket
 def on_message(ws, message):
     current_message = json.loads(message)
-    print(current_message)
     # Can add more GPS data here
     lat = current_message.get('boatbus', {}).get('lat')
     long = current_message.get('boatbus', {}).get('long')
@@ -104,6 +102,7 @@ data_thread.start()
 async def handler(websocket, path):
     while True:
         global gps_data
+        asyncio.sleep(1)
         await websocket.send(gps_data)
         await websocket.send("GPS data server 2 (port 5001)")
 

@@ -126,6 +126,7 @@ const AnchorTable = ({
         <input
           disabled={disabled}
           type="number"
+          min = "-180"
           value={longitude}
           onChange={(e) => setLongitude(parseFloat(e.target.value))}
         />
@@ -137,6 +138,7 @@ const AnchorTable = ({
         <input class="latitude_input"
           disabled={disabled}
           type="number"
+          min = "-180"
           value={latitude}
           onChange={(e) => setLatitude(parseFloat(e.target.value))}
         />

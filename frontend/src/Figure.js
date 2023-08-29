@@ -1,8 +1,14 @@
 import React, { useEffect, useState, useRef } from "react";
 import * as d3 from "d3";
 import Tablelines from "./Tablelines";
-import MapDemo from "./MapDemo";
+import MapDemo from "./Map";
 import Anchor_Alarm from "./images/danger-alarm.mp3";
+import { MapContainer, TileLayer } from "react-leaflet";
+import L from "leaflet";
+import MapOverlay from "./MapBackground";
+
+import "leaflet/dist/leaflet.css";
+
 const { CompassSVG } = require("./image_constants");
 const { boatIconSVG } = require("./image_constants");
 const { AnchorSVG } = require("./image_constants");
@@ -44,30 +50,10 @@ const Figure = ({
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
 
   // this is to obtain the coordinates of the axis and the limits of the figure (scaling)
-  const point_up = geod.Direct(
-    real_time_vessel.lat,
-    real_time_vessel.long,
-    90,
-    50
-  );
-  const point_down = geod.Direct(
-    real_time_vessel.lat,
-    real_time_vessel.long,
-    270,
-    50
-  );
-  const point_left = geod.Direct(
-    real_time_vessel.lat,
-    real_time_vessel.long,
-    0,
-    50
-  );
-  const point_right = geod.Direct(
-    real_time_vessel.lat,
-    real_time_vessel.long,
-    180,
-    50
-  );
+  const point_up = geod.Direct(latitude, longitude, 90, 50);
+  const point_down = geod.Direct(latitude, longitude, 270, 50);
+  const point_left = geod.Direct(latitude, longitude, 0, 50);
+  const point_right = geod.Direct(latitude, longitude, 180, 50);
 
   const minX = Math.min(
     point_up.lon2,
@@ -212,7 +198,7 @@ const Figure = ({
       .attr("r", xScale(real_radius_approx) - xScale(0))
       .attr("stroke", "black")
       .attr("fill", "#69b3a2")
-      .attr("opacity", 0.9);
+      .attr("opacity", 1);
   }, [real_radius_approx, xScale, yScale, longitude, latitude]);
 
   useEffect(() => {
@@ -233,7 +219,7 @@ const Figure = ({
       .attr("transform", `translate(${xScale(longitude)}, ${yScale(latitude)})`)
       .attr("stroke", "darkgreen")
       .attr("fill", "#69b3b2")
-      .attr("opacity", 0.7);
+      .attr("opacity", 0.9);
   }, [
     real_arcRadius_approx,
     angleSwipe,
@@ -255,10 +241,10 @@ const Figure = ({
         `translate(${xScale(longitude)}, ${yScale(latitude)})`
       );
     AnchorGroup.append("image")
-      .attr("width", 30) // Set the width of the icon
-      .attr("height", 62) // Set the height of the icon
-      .attr("x", -15) // Offset the icon horizontally to center it
-      .attr("y", -30) // Offset the icon vertically to position it correctly
+      .attr("width", 70) // Set the width of the icon
+      .attr("height", 100) // Set the height of the icon
+      .attr("x", -35) // Offset the icon horizontally to center it
+      .attr("y", -50) // Offset the icon vertically to position it correctly
       .attr("opacity", 1.5)
       .attr(
         "xlink:href",
@@ -303,7 +289,7 @@ const Figure = ({
       .append("text")
       .attr("class", "legend")
       .attr("x", legendX) // Position the legend on the right side
-      .attr("y", 20) // Offset from the top of the graph
+      .attr("y", 0) // Offset from the top of the graph
       .attr("text-anchor", "end") // Anchor the text to the end (right) of the x-coordinate
       .attr("fill", "red") // Set the fill color to red
       .attr("font-size", "14px") // Set the font size to a smaller value
@@ -402,8 +388,8 @@ const Figure = ({
       const yScale = d3.scaleLinear().domain([minY, maxY]).range([width, 0]);
 
       // Calculate the new longitude and latitude based on the clicked coordinates
-      const newLongitude = xScale.invert(mouseX)-0.00006377;
-      const newLatitude = yScale.invert(mouseY)+0.000050;
+      const newLongitude = xScale.invert(mouseX) - 0.00006377;
+      const newLatitude = yScale.invert(mouseY) + 0.00005;
 
       const info = geod.Inverse(
         real_time_vessel.lat,
@@ -420,21 +406,37 @@ const Figure = ({
     setMapClickActive(false);
   };
   return (
-    <div style={{ position: "relative"}}>
-          <div
+    
+    <div style={{ position: "relative" }}>
+      
+      
+      <div ref={graphRef} onClick={handleMapClick}>
+      </div>
+
+      {/* Add the MapDemo component here */}
+  
+      <div
         style={{
           position: "absolute",
           top: "50%",
           left: "50%",
-          transform: "translate(-50%, -50%)"
+          transform: "translate(-50%, -50%)",
+          pointerEvents: "none",
         }}
       >
-                <MapDemo size={{ width: width, height: height }} />
+        <MapDemo
+          info={{
+            width: width,
+            height: height,
+            latitude: latitude,
+            longitude: longitude,
+          }}
+          vessel_lat={real_time_vessel.lat}
+          vessel_long ={real_time_vessel.long}
+          inner_radius = {radius}
+          outer_radius = {arcRadius}
+        />
       </div>
-      
-      <div ref={graphRef} onClick={handleMapClick}></div>
-      {/* Add the MapDemo component here */}
-
     </div>
   );
 };

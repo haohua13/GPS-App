@@ -68,6 +68,7 @@ def handle_user_data_from_frontend(data):
 # gets message from Sentry webSocket and sends it to React frontend
 def on_message(ws, message):
     current_message = json.loads(message)
+    print(current_message)
     lat = current_message.get('boatbus', {}).get('lat')
     long = current_message.get('boatbus', {}).get('long')
     time = current_message.get('boatbus_timestamp')
