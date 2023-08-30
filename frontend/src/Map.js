@@ -35,7 +35,7 @@ function MapDemo({ info, vessel_lat, vessel_long, inner_radius, outer_radius}) {
   }
 
   return (
-    
+    <div>
     <div className="map" style={{ width: map.width, height: map.height }}>
       <svg width={"100%"} height={"100%"}>
         {<g className="map-imageLayer"></g>}
@@ -78,7 +78,8 @@ function MapDemo({ info, vessel_lat, vessel_long, inner_radius, outer_radius}) {
           })}
         </g>
       </svg>
-      <div className = "map_overlay" style={{ width: 400, height: 400}}>
+      </div>
+      <div className = "map_overlay" style={{ width: 550, height: 550}}>
       <MapOverlay latitude={info.latitude} longitude={info.longitude} vessel_lat = {vessel_lat} vessel_long = {vessel_long} inner_radius = {inner_radius} outer_radius = {outer_radius} />
       </div>
     </div>

@@ -9,6 +9,10 @@ import asyncio
 import websockets
 from data import Data
 from websockets.sync.client import connect
+
+
+
+
 SENTRY_IP = '172.17.86.72'
 directory_to_save = os.path.join("C:\\", "Users", "haohu", "GPS-APP", "tests", "new_test_23_08")
 os.makedirs(directory_to_save, exist_ok=True)
@@ -28,8 +32,8 @@ def reset_and_run_algorithm():
 # gets message from Sentry webSocket
 def on_message(ws, message):
     current_message = json.loads(message)
-    print(current_message)
     # Can add more GPS data here
+    # print(current_message)
     lat = current_message.get('boatbus', {}).get('lat')
     long = current_message.get('boatbus', {}).get('long')
     time = pd.to_datetime(current_message['boatbus_timestamp'], unit='ms')
@@ -44,7 +48,9 @@ def on_message(ws, message):
     alarm_2 = False
     # reads message in real-time and runs algorithm
     anc1, anc2 = my_vessel.return_anchor_position()
-    if (anc1 !=0) and (anc2 !=0):
+    alarmStatus = my_vessel.return_alarm_status()
+    if (anc1 !=0) and (anc2 !=0) and (alarmStatus == True):
+        # run algorithm when "Set Alarm" is pressed
         alarm_1, alarm_2 = my_vessel.read_message(current_message)    
 
     # Save the message to a JSON file
@@ -106,14 +112,28 @@ async def handler(websocket, path):
         global gps_data
         await websocket.send(gps_data)
         await websocket.send("GPS data server 2 (port 5001)")
+        data = await websocket.recv()
+        if (data.startswith('{"radius"')):
+            real_data = json.loads(data)
+            radius = real_data['radius']
+            arcRadius = real_data['arcRadius']
+            angleSwipe = real_data['angleSwipe']
+            swipe = real_data['swipe']
+            vessel_long = real_data['longitude']
+            vessel_lat = real_data['latitude']
+            my_vessel.define_anchor_area(vessel_long, vessel_lat, radius, arcRadius, swipe, angleSwipe)
+        if (data.startswith('"{alarm"')):
+            real_data = json.loads(data)
+            my_vessel.alarm(real_data['alarmStatus'])
+
 
 start_server = websockets.serve(handler, "localhost", 5001)
 asyncio.get_event_loop().run_until_complete(start_server)
 asyncio.get_event_loop().run_forever()
 
-
 if __name__ == "__main__":
     handle_real_time_data()
+
     
 
 

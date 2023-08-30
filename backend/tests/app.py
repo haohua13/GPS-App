@@ -7,6 +7,8 @@ import json
 from datetime import datetime
 import websocket
 from gps_alarm import Vessel
+import asyncio
+import websockets
 
 # create instance of Flask app
 app = Flask(__name__)

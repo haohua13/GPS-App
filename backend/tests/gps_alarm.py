@@ -33,6 +33,7 @@ class Vessel():
         self.azimuth = 0
         self.swipe = 0
         self.angleswipe = 0
+        self.alarm_status = False
 
         # Parameters for GPS alarm
         self.anchor_distance = 0
@@ -54,7 +55,7 @@ class Vessel():
 
         # User Defined Parameters
         self.time_interval = 2 # sample time in seconds
-        self.gps_time_out_tolerance = 60 # GPS disconnection time tolerance in seconds
+        self.gps_time_out_tolerance = 10 # GPS disconnection time tolerance in seconds
         self.gps_accuracy = 3 # GPS accuracy
         self.disconnect_bound = 10 # number of consecutive disconnection readings ('NaN')
         self.out_of_bound = 10 # number of consecutive out-of-bounds readings
@@ -79,15 +80,15 @@ class Vessel():
 
     def check_gps(self):
         time_difference = (self.current_time-self.prev_time).total_seconds()
+        print(time_difference)
         # if the time difference is greater than the time out tolerance and value is NaN?, then the GPS is not working
         if self.gnss_method == 0:
-            if time_difference > self.gps_time_out_tolerance and math.isnan(self.lat) or math.isnan(self.long):
+            if time_difference > self.gps_time_out_tolerance:
                 self.disconnect_counter += 1
             if self.disconnect_counter > self.disconnect_bound:
                 print('GPS Disconnection Alarm')
                 self.disconnect_counter = 0 # reset alarm
         elif time_difference>=self.time_interval:
-                print(time_difference)
                 # calculate distance between current and previous position
                 # print(f'Previous Position: {self.prev_lat}, {self.prev_long}')
                 # print(f'Current Position: {self.lat}, {self.long}')
@@ -207,4 +208,8 @@ class Vessel():
         print(f'Anchor position: ({anchor_lat}, {anchor_long}) º')
         print(f'Swipe: {swipe} º')
         print(f'Angle Swipe: {angleswipe} º')
+    def alarm(self, alarm_status):
+        self.alarm_status = alarm_status
 
+    def return_alarm_status(self):
+        return self.alarm_status

@@ -55,6 +55,7 @@ const Figure = ({
   const point_left = geod.Direct(latitude, longitude, 0, 50);
   const point_right = geod.Direct(latitude, longitude, 180, 50);
 
+  const point_up_test = geod.Direct(latitude, longitude,90, 130);
   const minX = Math.min(
     point_up.lon2,
     point_down.lon2,
@@ -333,6 +334,7 @@ const Figure = ({
         .attr("cy", yScale(real_time_vessel.lat))
         .attr("r", 3)
         .attr("fill", "black");
+        
       // Add event listeners for mouse events
       const svgElement = d3.select(graphRef.current).select("svg").node();
       svgElement.addEventListener("mousedown", handleMouseDown);

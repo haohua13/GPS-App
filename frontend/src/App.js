@@ -19,9 +19,10 @@ var geodesic = require("geographiclib-geodesic"),
   geod = geodesic.Geodesic.WGS84;
 
 // initialize the websocket connection with port 5000
-const FlaskWebsocket = new WebSocket(
-  "ws://" + FlaskConnection.IP + ":" + FlaskConnection.port
-);
+// const FlaskWebsocket = new WebSocket(
+// "ws://" + FlaskConnection.IP + ":" + FlaskConnection.port
+// );
+
 // initialize the websocket connection with port 5001
 const socket = new WebSocket(
   "ws://" + FlaskConnection2.IP + ":" + FlaskConnection2.port
@@ -81,7 +82,7 @@ const App = () => {
     }
   };
 
-  FlaskWebsocket.onopen = () => {
+  /* FlaskWebsocket.onopen = () => {
     console.log("Websocket connected");
     FlaskWebsocket.send("Hello from React!");
     setConnection(true);
@@ -92,7 +93,7 @@ const App = () => {
     if (message.data.includes("radius")) {
       console.log(message.data);
     }
-  };
+  }; */
 
   socket.onopen = () => {
     console.log("Websocket2 connected");
@@ -105,6 +106,7 @@ const App = () => {
     // console.log(message);
     if (message.data.includes("heading")) {
       let data = JSON.parse(message.data);
+      console.log("Message from backend");
       console.log(data);
       setHeading(data.heading);
       setRealVesselPosition({
@@ -129,9 +131,16 @@ const App = () => {
 
   useEffect(() => {
     // only update user data when alarm is off
+    console.log(alarmStatus);
+    let obj1 = {
+      alarmStatus: alarmStatus,
+    };
+    if (connection2) {
+      socket.send(JSON.stringify(obj1));
+    }
     if (!alarmStatus) {
-      if (connection) {
-        FlaskWebsocket.send("alarm status update");
+      if (connection2) {
+        socket.send("alarm status update");
         // send anchor position and anchor area to backend
         let obj = {
           radius: radius,
@@ -141,8 +150,9 @@ const App = () => {
           longitude: longitude,
           latitude: latitude,
         };
-        FlaskWebsocket.send(JSON.stringify(obj));
+        socket.send(JSON.stringify(obj));
         console.log("User Data sent");
+        console.log(JSON.stringify(obj));
       }
     }
   }, [
@@ -207,7 +217,7 @@ const App = () => {
               longitude={longitude}
               real_time_vessel={real_time_vessel}
             ></Trajectory>
-  
+
             {/* Render the Figure component inside the inner wrapper */}
             {/* This component contains the figure and figure information*/}
             <div className="figure-layout-container">
@@ -215,7 +225,7 @@ const App = () => {
               <div className="instructions-column">
                 <Instructions></Instructions>
               </div>
-              
+
               <div className="figure-column">
                 <Figure
                   latitude={latitude}
@@ -245,7 +255,7 @@ const App = () => {
                 ></FigureTable>
               </div>
               {/* This component contains the gps information + trajectory history*/}
-              
+
               <div className="menu-column">
                 <Menu
                   time={time}
