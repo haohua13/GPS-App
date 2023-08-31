@@ -1,7 +1,7 @@
-import React, { useEffect, useState, useRef } from "react";
 import Tablelines from "./Tablelines";
 
-const Menu = ({ time, GpsStatus, NumSatellites, Battery }) => {
+const Menu = ({ time, GpsStatus, NumSatellites, Battery, hdop}) => {
+  const accuracy= hdop*3;
   return (
     <div>
       <Tablelines>
@@ -9,9 +9,9 @@ const Menu = ({ time, GpsStatus, NumSatellites, Battery }) => {
       </Tablelines>
       <Tablelines>
         GPS Status
-        {/* Show Active or Inactive when GNSS method is 0/1/2/6*/}
+        {/* GNSS Method Inactive(0), Active (1, 2, 6)*/}
         <Tablelines>
-          <b>{GpsStatus ? "Active" : "Lost Signal"}</b>
+          <b>{GpsStatus ? "Lost Signal" : "Active"}</b>
           </Tablelines>
       </Tablelines>
       <Tablelines>
@@ -37,7 +37,13 @@ const Menu = ({ time, GpsStatus, NumSatellites, Battery }) => {
       <Tablelines>
         Last GPS update
         <Tablelines>
-          <b>{time.toFixed(2)} [ms]</b>
+          <b>{time.toFixed(2)} [s]</b>
+        </Tablelines>
+      </Tablelines>
+      <Tablelines>
+        HDOP Accuracy
+        <Tablelines>
+          <b>{accuracy.toFixed(2)} [m]</b>
         </Tablelines>
       </Tablelines>
     </div>

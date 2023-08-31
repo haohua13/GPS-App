@@ -1,0 +1,8 @@
+Alarm Status True for Alarm DONE
+When Alarm Status True, start algorithm
+Timestamp check values
+Check distance values DONE
+Inner and Outer Alarm not sending properly
+Anchor Position and Current Position inversed DONE
+Heading converted to degrees DONE
+Use Boatbus timestamp DONE

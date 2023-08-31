@@ -52,6 +52,7 @@ class Vessel():
         self.hdop = 0 
         self.pdop = 0
         self.gnss_method = 1
+        self.alarm_status = False
 
         # User Defined Parameters
         self.time_interval = 2 # sample time in seconds
@@ -59,8 +60,8 @@ class Vessel():
         self.gps_accuracy = 3 # GPS accuracy
         self.disconnect_bound = 10 # number of consecutive disconnection readings ('NaN')
         self.out_of_bound = 10 # number of consecutive out-of-bounds readings
-        self.HDOP_threshold = 8 # HDOP threshold
-        self.PDOP_threshold = 9 # PDOP threshold
+        self.HDOP_threshold = 6 # HDOP threshold
+        self.PDOP_threshold = 7 # PDOP threshold
 
     def return_anchor_position(self):
         return self.anchor_lat, self.anchor_long
@@ -80,7 +81,6 @@ class Vessel():
 
     def check_gps(self):
         time_difference = (self.current_time-self.prev_time).total_seconds()
-        print(time_difference)
         # if the time difference is greater than the time out tolerance and value is NaN?, then the GPS is not working
         if self.gnss_method == 0:
             if time_difference > self.gps_time_out_tolerance:
@@ -89,10 +89,7 @@ class Vessel():
                 print('GPS Disconnection Alarm')
                 self.disconnect_counter = 0 # reset alarm
         elif time_difference>=self.time_interval:
-                # calculate distance between current and previous position
-                # print(f'Previous Position: {self.prev_lat}, {self.prev_long}')
-                # print(f'Current Position: {self.lat}, {self.long}')
-                if self.hdop<self.HDOP_threshold or self.pdop<self.PDOP_threshold:   
+                if self.hdop<self.HDOP_threshold and self.pdop<self.PDOP_threshold:   
                     dic = Geodesic.WGS84.Inverse(self.prev_lat, self.prev_long, self.lat, self.long)
                     dic2 = Geodesic.WGS84.Inverse(self.initial_lat, self.initial_long, self.lat, self.long)
                     position_distance_2 = dic2["s12"]
@@ -101,12 +98,6 @@ class Vessel():
                     self.prev_long = self.long
                 else:
                     self.position_distance = 0 # if the HDOP or PDOP is too high, then the distance is 0 (stay in same position)
-                # nan values is when distance is the same as the previous position
-                    if (math.isnan(self.position_distance)):
-                        self.position_distance = 0
-                # print(f'Distance between previous and current position: {self.position_distance:.4f} meters')
-                # print(f'Distance between initial and current position: {position_distance_2:.4f} meters')
-
                 # if the distance between current and previous position is smaller than 2*gps accuracy, then GPS value is valid
                 if self.position_distance<2*self.gps_accuracy:
                     self.position_counter += 1
@@ -117,7 +108,7 @@ class Vessel():
                     dic = Geodesic.WGS84.Inverse(self.anchor_lat, self.anchor_long, self.lat, self.long)
                     distance_vessel = dic["s12"] # distance in meters
                     self.azimuth = dic["azi1"] # anchor to vessel azimuth
-                    print(f'Distance between anchor position and current position: {distance_vessel:.4f} meters')
+                    # print(f'Distance between anchor position and current position: {distance_vessel:.4f} meters')
                     # if the distance is outside of the arc radius and swipe, then the ship is drifting
                     limits1, limits2 = self.define_area()
                     if(self.azimuth<0):
@@ -156,6 +147,7 @@ class Vessel():
 
     def read_message(self, current_message):
         # If first message, calculate position of anchor and radius
+        number = '8'
         if self.message == 0:
             self.message = current_message
             # transform message into processing data
@@ -164,20 +156,24 @@ class Vessel():
             self.yaw = self.message['imu']['yaw']
             self.messageID = self.message['messageID']
             self.boatbus_timestamp = self.message['boatbus_timestamp']
-            self.prev_time = pd.to_datetime(self.message['boatbus_timestamp'], unit='ms')
+            self.lat = current_message.get('boatbus_full_unsync', {}).get('position', {}).get(number, {}).get('latitude')
+            self.long = current_message.get('boatbus_full_unsync', {}).get('position', {}).get(number, {}).get('longitude')
+            self.heading = current_message.get('boatbus_full_unsync', {}).get('heading', {}).get(number, {}).get('heading')
+            self.altitude = current_message.get('boatbus_full_unsync', {}).get('gnss', {}).get(number, {}).get('altitude')
+            self.gnss_method = current_message.get('boatbus_full_unsync', {}).get('gnss', {}).get(number, {}).get('gnss_method')
+            self.n_satellites = current_message.get('boatbus_full_unsync', {}).get('gnss', {}).get(number,  {}).get('n_satellites')
+            self.hdop = current_message.get('boatbus_full_unsync', {}).get('gnss', {}).get(number,  {}).get('hdop')
+            self.pdop = current_message.get('boatbus_full_unsync', {}).get('gnss', {}).get(number,  {}).get('pdop')
+            self.prev_time = pd.to_datetime(self.boatbus_timestamp, unit = 'ms')
             print(f'Previous Time: {self.prev_time}')
             self.current_time = self.prev_time
             print(f'Current Time: {self.current_time}')
-            self.lat = self.message['boatbus']['lat']
-            self.long = self.message['boatbus']['long']
+            # self.lat = self.message['boatbus']['lat']
+            # self.long = self.message['boatbus']['long']
             self.prev_lat = self.lat
             self.prev_long = self.long
             self.initial_lat = self.lat
             self.initial_long = self.long
-            self.heading = self.message['boatbus']['heading']
-            self.gnss_method = self.message.get('gnss', {}).get(7, {}).get('gnss_method')
-            self.hdop = self.message.get('gnss', {}).get(7, {}).get('hdop')
-            self.pdop = self.message.get('gnss', {}).get(7, {}).get('pdop')
         else:
             # check current GPS position
             self.message = current_message
@@ -186,13 +182,18 @@ class Vessel():
             self.yaw = self.message['imu']['yaw']
             self.messageID = self.message['messageID']
             self.boatbus_timestamp = self.message['boatbus_timestamp']
-            self.current_time = pd.to_datetime(self.message['boatbus_timestamp'], unit='ms')
-            self.lat = self.message['boatbus']['lat']
-            self.long = self.message['boatbus']['long']
-            self.heading = self.message['boatbus']['heading']
-            self.gnss_method = self.message.get('gnss', {}).get(7, {}).get('gnss_method')
-            self.hdop = self.message.get('gnss', {}).get(7, {}).get('hdop')
-            self.pdop = self.message.get('gnss', {}).get(7, {}).get('pdop')
+            self.lat = current_message.get('boatbus_full_unsync', {}).get('position', {}).get(number, {}).get('latitude')
+            self.long = current_message.get('boatbus_full_unsync', {}).get('position', {}).get(number, {}).get('longitude')
+            self.heading = current_message.get('boatbus_full_unsync', {}).get('heading', {}).get(number, {}).get('heading')
+            self.altitude = current_message.get('boatbus_full_unsync', {}).get('gnss', {}).get(number, {}).get('altitude')
+            self.gnss_method = current_message.get('boatbus_full_unsync', {}).get('gnss', {}).get(number, {}).get('gnss_method')
+            self.n_satellites = current_message.get('boatbus_full_unsync', {}).get('gnss', {}).get(number,  {}).get('n_satellites')
+            self.hdop = current_message.get('boatbus_full_unsync', {}).get('gnss', {}).get(number,  {}).get('hdop')
+            self.pdop = current_message.get('boatbus_full_unsync', {}).get('gnss', {}).get(number,  {}).get('pdop')
+            # self.current_time = pd.to_datetime(current_message.get('boatbus_full_unsync', {}).get('gnss', {}).get(number, {}).get('timestamp'), unit='ms')
+            self.current_time = pd.to_datetime(self.boatbus_timestamp, unit = 'ms')
+            if (self.gnss_method == 'None'):
+                self.gnss_method = 0
             _, _, self.alarm_lv1, self.alarm_lv2 = self.check_gps()
             return self.alarm_lv1, self.alarm_lv2
 

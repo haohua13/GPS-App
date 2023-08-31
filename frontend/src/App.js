@@ -5,13 +5,10 @@ import FigureTable from "./FigureTable";
 import Menu from "./Menu";
 import Instructions from "./Instructions";
 import Trajectory from "./Trajectory";
-import MapDemo from "./Map";
 import Alarm from "./Alarm";
-import MapOverlay from "./MapBackground";
 import "./styles.css"; // Import the CSS file
 // Importing modules
 import React, { useState, useEffect } from "react";
-import { FlaskConnection } from "./WebsocketURL";
 import { FlaskConnection2 } from "./WebsocketURL";
 
 // initialize the geodesic module
@@ -49,7 +46,6 @@ const App = () => {
   // set vessel heading
   const [heading, setHeading] = useState(45);
 
-  const [connection, setConnection] = useState(false);
   const [connection2, setConnection2] = useState(false);
 
   // set alarm status for user data update control
@@ -115,13 +111,11 @@ const App = () => {
       });
       setAlarmLv1(data.alarmLv1);
       setAlarmLv2(data.alarmLv2);
-      setTime(data.time - time);
+      setTime((data.time - time).total_seconds());
       // Set GPS-Status to True when GNSS method is 1 2 or 6 (Active)
-      setGpsStatus(
-        data.GNSS_method === 1 ||
-          data.GNSS_method === 2 ||
-          data.GNSS_method === 6
-      );
+      if (data.GNSS_method === 1 || data.GNSS_method === 2 || data.GNSS_method === 6) {
+        setGpsStatus(true);
+      }
       setNumSatellites(data.n_satellites);
       setPdop(data.pdop);
       setHdop(data.hdop);
@@ -156,7 +150,7 @@ const App = () => {
       }
     }
   }, [
-    connection,
+    connection2, 
     radius,
     arcRadius,
     angleSwipe,
@@ -262,6 +256,7 @@ const App = () => {
                   GpsStatus={GpsStatus}
                   NumSatellites={NumSatellites}
                   Battery={Battery}
+                  hdop = {hdop}
                 ></Menu>
               </div>
             </div>
